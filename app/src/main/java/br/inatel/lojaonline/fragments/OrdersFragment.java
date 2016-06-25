@@ -7,7 +7,9 @@ package br.inatel.lojaonline.fragments;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +62,28 @@ public class OrdersFragment extends Fragment implements OrderEvents {
         OrderAdapter orderAdapter = new OrderAdapter(
                 getActivity(), orders);
         listViewOrders.setAdapter(orderAdapter);
+        listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                    long orderId) {
+                // TODO Auto-generated method stub
+
+                Log.d("############", "Items " + "Ok");
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+
+                DeatailsOrderFragment deatailsOrderFragment = new DeatailsOrderFragment();
+                Bundle data = new Bundle();
+                data.putString("orderId", orderId+"");
+
+                deatailsOrderFragment.setArguments(data);
+                ft.replace(R.id.container, deatailsOrderFragment);
+                ft.commit();
+            }
+
+        });
+
     }
 
     @Override
@@ -78,4 +102,5 @@ public class OrdersFragment extends Fragment implements OrderEvents {
     public void getOrderByIdFailed(WebServiceResponse webServiceResponse) {
 
     }
+
 }
