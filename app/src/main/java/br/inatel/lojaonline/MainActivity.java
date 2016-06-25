@@ -78,10 +78,11 @@ public class MainActivity extends AppCompatActivity
             //TODO TENTA FAZER LOGIN
             WebServiceResponse webServiceResponse;
             LoginTask orderTasks = new LoginTask(this,this);
+            orderTasks.execute();
         }
     }
 
-    public void getSharedPrefefences(){
+    public void buildAlertDialog(){
 
     }
 
@@ -173,7 +174,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void LoginError(String errorMsg) {
-        Log.e("LOGIN ERROR: ", errorMsg);
+    public void LoginResponse(WebServiceResponse response) {
+        Log.e("LOGIN ERROR: ", ""+response);
+        if (response.getResponseCode() != 200){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Login de usuário");
+            builder.setMessage("Não foi possivel fazer login de usuário!")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do nothing
+                        }
+                    });
+            builder.create();
+            builder.show();
+        }
     }
 }

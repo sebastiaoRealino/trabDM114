@@ -2,15 +2,8 @@ package br.inatel.lojaonline.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 
 import br.inatel.lojaonline.interfaces.LoginInterface;
-import br.inatel.lojaonline.models.Order;
 import br.inatel.lojaonline.webservice.WebServiceClient;
 import br.inatel.lojaonline.webservice.WebServiceResponse;
 
@@ -30,12 +23,11 @@ public class LoginTask extends AsyncTask<Void, Integer, WebServiceResponse> {
     @Override
     protected WebServiceResponse doInBackground(Void... params) {
         WebServiceClient wsClient = WebServiceClient.getInstance();
-        WebServiceResponse response = wsClient.authenticate(mContext);
-        return null;
+        return wsClient.authenticate(mContext);
     }
     @Override
     protected void onPostExecute(
             WebServiceResponse webServiceResponse) {
-        mLoginInterface.LoginError("TASK COMPLETED");
+        mLoginInterface.LoginResponse(webServiceResponse);
     }
 }

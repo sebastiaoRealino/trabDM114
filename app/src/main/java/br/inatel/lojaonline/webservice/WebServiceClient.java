@@ -33,7 +33,6 @@ public class WebServiceClient {
     private WebServiceClient(){
 
     }
-    //***********************SINGLETON FACTORY***********************************
 
     static WebServiceClient webServiceClient = null;
 
@@ -43,7 +42,7 @@ public class WebServiceClient {
         }
         return webServiceClient;
     }
-    //**************************************************************************
+
 
 
     public WebServiceResponse get(Context context, String host) {
@@ -183,7 +182,7 @@ public class WebServiceClient {
 
             SharedPreferences sharedSettings =
                     PreferenceManager.getDefaultSharedPreferences(context);
-
+            //TODO: REMOVE DEFAULT STRING
             String wsUsername = sharedSettings.getString(
                     context.getString(R.string.pref_user_login),
                     context.getString(R.string.pref_ws_default_username));
