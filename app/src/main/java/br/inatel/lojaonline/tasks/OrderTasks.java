@@ -35,7 +35,7 @@ public class OrderTasks {
         new AsyncTask<Void, Void, WebServiceResponse>() {
             @Override
             protected WebServiceResponse doInBackground(Void... params) {
-                return WebServiceClient.get(context,
+                return WebServiceClient.getInstance().get(context,
                         baseAddress + GET_ORDERS);
             }
             @Override
@@ -63,7 +63,7 @@ public class OrderTasks {
         new AsyncTask<Integer, Void, WebServiceResponse>() {
             @Override
             protected WebServiceResponse doInBackground(Integer... id) {
-                return WebServiceClient.get(context,
+                return WebServiceClient.getInstance().get(context,
                         baseAddress + GET_ORDERS_BY_ID + "/" +
                                 Integer.toString(id[0]));
             }

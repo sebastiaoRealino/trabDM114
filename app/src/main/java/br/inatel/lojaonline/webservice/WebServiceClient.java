@@ -30,21 +30,23 @@ public class WebServiceClient {
     private static HttpURLConnection conn;
     private static AccessToken accessToken;
 
-    private WebServiceClient(){}
+    private WebServiceClient(){
+
+    }
     //***********************SINGLETON FACTORY***********************************
 
-    static WebServiceClient sharedPreferenceController = null;
+    static WebServiceClient webServiceClient = null;
 
-    public static WebServiceClient getInstance(Context context) {
-        if (sharedPreferenceController == null) {
-            WebServiceClient = new WebServiceClient(context);
+    public static WebServiceClient getInstance() {
+        if (webServiceClient == null) {
+            webServiceClient = new WebServiceClient();
         }
-        return sharedPreferenceController;
+        return webServiceClient;
     }
     //**************************************************************************
 
 
-    public static WebServiceResponse get(Context context, String host) {
+    public WebServiceResponse get(Context context, String host) {
         WebServiceResponse webServiceResponse;
         InputStream is = null;
 
@@ -86,7 +88,7 @@ public class WebServiceClient {
         return webServiceResponse;
     }
 
-    public static WebServiceResponse post (Context context,
+    public WebServiceResponse post (Context context,
                                            String host, String json) {
         WebServiceResponse webServiceResponse = new WebServiceResponse();
         try {
@@ -136,7 +138,7 @@ public class WebServiceClient {
         return webServiceResponse;
     }
 
-    private static WebServiceResponse init(Context context, String host,
+    public WebServiceResponse init(Context context, String host,
                                            String method) throws IOException {
         WebServiceResponse webServiceResponse;
         if (!isTokenValid(context)) {
@@ -163,7 +165,7 @@ public class WebServiceClient {
         return webServiceResponse;
     }
 
-    private static WebServiceResponse authenticate (Context context) {
+    public WebServiceResponse authenticate (Context context) {
         WebServiceResponse webServiceResponse = new WebServiceResponse();
         String baseAddress = WSUtil.getHostAddress(context);
         accessToken = null;
@@ -234,7 +236,7 @@ public class WebServiceClient {
         return webServiceResponse;
     }
 
-    private static String generateGrantType(String username,
+    public String generateGrantType(String username,
                                             String password) {
         String grantType = "grant_type=password&username=" +
                 username + "&password="
@@ -243,7 +245,7 @@ public class WebServiceClient {
         return grantType;
     }
 
-    private static void invalidateToken(Context context) {
+    private void invalidateToken(Context context) {
         SharedPreferences sharedSettings =
                 PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedSettings.edit();
@@ -252,7 +254,7 @@ public class WebServiceClient {
         editor.commit();
     }
 
-    private static boolean isTokenValid(Context context) {
+    public boolean isTokenValid(Context context) {
         SharedPreferences sharedSettings =
                 PreferenceManager.getDefaultSharedPreferences(context);
         long expirationTime;
@@ -275,7 +277,7 @@ public class WebServiceClient {
         return false;
     }
 
-    private static String readIt(InputStream stream) throws IOException {
+    public String readIt(InputStream stream) throws IOException {
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new

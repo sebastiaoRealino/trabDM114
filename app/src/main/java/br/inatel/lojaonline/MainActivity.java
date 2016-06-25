@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -22,11 +23,13 @@ import android.view.MenuItem;
 import br.inatel.lojaonline.controller.SharedPreferenceController;
 import br.inatel.lojaonline.fragments.OrdersFragment;
 import br.inatel.lojaonline.fragments.SettingsFragment;
+import br.inatel.lojaonline.interfaces.LoginInterface;
+import br.inatel.lojaonline.tasks.LoginTask;
 import br.inatel.lojaonline.webservice.WebServiceClient;
 import br.inatel.lojaonline.webservice.WebServiceResponse;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginInterface {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +77,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             //TODO TENTA FAZER LOGIN
             WebServiceResponse webServiceResponse;
-
-//            WebServiceClient.
-
+            LoginTask orderTasks = new LoginTask(this,this);
         }
     }
 
@@ -169,5 +170,10 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void LoginError(String errorMsg) {
+        Log.e("LOGIN ERROR: ", errorMsg);
     }
 }
