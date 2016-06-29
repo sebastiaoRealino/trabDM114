@@ -20,6 +20,11 @@
             android:id="@+id/nav_gcm"
             android:icon="@drawable/ic_menu_manage"
             android:title="Registro GCM"/>
+
+        <item
+            android:id="@+id/nav_product_list"
+            android:icon="@drawable/ic_media_play"
+            android:title="Lista de produtos"/>
     </group>
 
 </menu>

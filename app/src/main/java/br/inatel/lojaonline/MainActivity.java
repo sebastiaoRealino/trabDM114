@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import br.inatel.lojaonline.controller.SharedPreferenceController;
 import br.inatel.lojaonline.fragments.GCMFragment;
 import br.inatel.lojaonline.fragments.OrdersFragment;
+import br.inatel.lojaonline.fragments.ProductListFragment;
 import br.inatel.lojaonline.fragments.SettingsFragment;
 import br.inatel.lojaonline.interfaces.LoginInterface;
 import br.inatel.lojaonline.tasks.LoginTask;
@@ -157,6 +158,10 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case R.id.nav_gcm:
                     fragmentClass = GCMFragment.class;
+                    fragment = (Fragment) fragmentClass.newInstance();
+                    break;
+                case R.id.nav_product_list:
+                    fragmentClass = ProductListFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
                     break;
                 default:
