@@ -185,10 +185,10 @@ public class WebServiceClient {
             //TODO: REMOVE DEFAULT STRING
             String wsUsername = sharedSettings.getString(
                     context.getString(R.string.pref_user_login),
-                    context.getString(R.string.pref_ws_default_username));
+                    "");
             String wsPassword = sharedSettings.getString(
                     context.getString(R.string.pref_user_password),
-                    context.getString(R.string.pref_ws_default_password));
+                    "");
 
 
             String s = context.getString(R.string.pref_user_login);
