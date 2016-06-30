@@ -62,6 +62,7 @@ public class OrdersFragment extends Fragment implements OrderEvents {
         OrderAdapter orderAdapter = new OrderAdapter(
                 getActivity(), orders);
         listViewOrders.setAdapter(orderAdapter);
+
         listViewOrders.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override

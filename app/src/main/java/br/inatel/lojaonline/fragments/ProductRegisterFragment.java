@@ -1,15 +1,12 @@
 package br.inatel.lojaonline.fragments;
 
-import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.List;
 
@@ -17,15 +14,13 @@ import br.inatel.lojaonline.R;
 import br.inatel.lojaonline.adapters.ProductAdapter;
 import br.inatel.lojaonline.interfaces.ProductEvents;
 import br.inatel.lojaonline.models.Product;
-import br.inatel.lojaonline.tasks.OrderTasks;
 import br.inatel.lojaonline.tasks.ProductsTasks;
-import br.inatel.lojaonline.util.CheckNetworkConnection;
 import br.inatel.lojaonline.webservice.WebServiceResponse;
 
 /**
  * Created by Seba on 28/06/2016.
  */
-public class ProductListFragment extends Fragment implements ProductEvents {
+public class ProductRegisterFragment extends Fragment implements ProductEvents {
 
     private ListView mListViewProducts;
     @Override
