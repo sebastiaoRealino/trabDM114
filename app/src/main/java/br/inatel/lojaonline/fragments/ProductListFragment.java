@@ -59,17 +59,17 @@ public class ProductListFragment extends Fragment implements ProductEvents {
     }
 
     @Override
-    public void getOrdersFailed(WebServiceResponse webServiceResponse) {
+    public void getProductsFailed(WebServiceResponse webServiceResponse) {
 
     }
 
     @Override
-    public void getOrderByIdFinished(Product product) {
+    public void postProductFinished(String message) {
 
     }
 
     @Override
-    public void getOrderByIdFailed(WebServiceResponse webServiceResponse) {
+    public void postProductFailed(String error) {
 
     }
 }

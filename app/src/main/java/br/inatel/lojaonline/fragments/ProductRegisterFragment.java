@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.List;
@@ -20,25 +22,29 @@ import br.inatel.lojaonline.webservice.WebServiceResponse;
 /**
  * Created by Seba on 28/06/2016.
  */
-public class ProductRegisterFragment extends Fragment implements ProductEvents {
+public class ProductRegisterFragment extends Fragment implements ProductEvents, View.OnClickListener {
 
-    private ListView mListViewProducts;
+
+    EditText mIdNewProduct;
+    EditText mNameNovoProduto;
+    EditText mEditTextPrice;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_product_list,
+        getActivity().setTitle("Gegistro de Produto");
+        View rootView = inflater.inflate(R.layout.fragment_product_register,
                 container, false);
-        getActivity().setTitle("Produtos");
 
-        mListViewProducts = (ListView) rootView.
-                findViewById(R.id.product_list);
+        mIdNewProduct    = (EditText) rootView.findViewById(R.id.idNewProduct) ;
+        mNameNovoProduto = (EditText) rootView.findViewById(R.id.nameNovoProduto);
+        mEditTextPrice   = (EditText) rootView.findViewById(R.id.editTextPrice);
 
+        Button buttonRegister = (Button) rootView.findViewById(R.id.btnRegister);
+        buttonRegister.setOnClickListener(this);
 
-        ProductsTasks productsTasks = new ProductsTasks(getActivity(), this);
-        productsTasks.getProducts();
         return rootView;
     }
+
 
     @Override
     public void getProductsFinished(List<Product> products) {
@@ -46,25 +52,32 @@ public class ProductRegisterFragment extends Fragment implements ProductEvents {
             Log.i("ProductFragment", "Nome: " + product.getNome() + " Descricao: " + product.getDescricao());
         }
 
+    }
 
-        ProductAdapter proctAdapter = new ProductAdapter(
-                getActivity(), products);
-        mListViewProducts.setAdapter(proctAdapter);
+    @Override
+    public void getProductsFailed(WebServiceResponse webServiceResponse) {
 
     }
 
     @Override
-    public void getOrdersFailed(WebServiceResponse webServiceResponse) {
-
+    public void postProductFinished(String message) {
+        Log.i("ProducRegisterFragment"," postProductFinished POST!");
     }
 
     @Override
-    public void getOrderByIdFinished(Product product) {
-
+    public void postProductFailed(String error) {
+        Log.i("ProducRegisterFragment"," postProductFinished Failed! MSG: "+ error);
     }
 
     @Override
-    public void getOrderByIdFailed(WebServiceResponse webServiceResponse) {
+    public void onClick(View v) {
+        Product product = new Product();
+        product.setCodigo((mIdNewProduct.getText().toString()));
+        product.setNome(mNameNovoProduto.getText().toString());
+        double d = Double.parseDouble(mEditTextPrice.getText().toString());
+        product.setPreco(d);
 
+        ProductsTasks productsTasks = new ProductsTasks(getActivity(), this);
+        productsTasks.postNewProduct(product);
     }
 }

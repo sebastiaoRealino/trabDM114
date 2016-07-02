@@ -11,7 +11,7 @@ import br.inatel.lojaonline.webservice.WebServiceResponse;
 public interface ProductEvents  {
 
     void getProductsFinished(List<Product> orders);
-    void getOrdersFailed(WebServiceResponse webServiceResponse);
-    void getOrderByIdFinished(Product product);
-    void getOrderByIdFailed(WebServiceResponse webServiceResponse);
+    void getProductsFailed(WebServiceResponse webServiceResponse);
+    void postProductFinished(String message);
+    void postProductFailed(String error);
 }

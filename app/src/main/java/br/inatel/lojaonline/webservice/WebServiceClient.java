@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.net.HttpURLConnection;
@@ -96,14 +97,12 @@ public class WebServiceClient {
             if (webServiceResponse.getResponseCode() != 200) {
                 return webServiceResponse;
             }
-
             conn.setDoOutput(true);
             conn.setFixedLengthStreamingMode(json.length());
             conn.getOutputStream().write(json.getBytes("UTF-8"));
             conn.getOutputStream().flush();
             conn.getOutputStream().close();
             conn.connect();
-
             if (conn.getResponseCode() == 401) {
                 invalidateToken(context);
                 webServiceResponse = init(context, host,
@@ -119,9 +118,7 @@ public class WebServiceClient {
                     conn.connect();
                 }
             }
-
             InputStream is = new BufferedInputStream(conn.getInputStream());
-
             webServiceResponse = new WebServiceResponse();
             webServiceResponse.setResultMessage(readIt(is));
             webServiceResponse.setResponseCode(conn.getResponseCode());
@@ -133,7 +130,6 @@ public class WebServiceClient {
         } finally {
             conn.disconnect();
         }
-
         return webServiceResponse;
     }
 
@@ -156,9 +152,11 @@ public class WebServiceClient {
         conn.setRequestMethod(method);
         conn.setRequestProperty("Accept", WSConstants.CONTENT_TYPE_JSON);
         conn.setRequestProperty("Content-Type", WSConstants.CONTENT_TYPE_JSON);
+
         if (accessToken != null) {
             conn.setRequestProperty("Authorization", "Bearer " +
                     accessToken.getAccess_token());
+            Log.i("AcessToken" , "AcessToken: "+ accessToken.getAccess_token() );
         }
 
         return webServiceResponse;
@@ -276,19 +274,16 @@ public class WebServiceClient {
         return false;
     }
 
-    public String readIt(InputStream stream) throws IOException {
-
+    private static String readIt(InputStream stream) throws IOException {
         try {
             BufferedReader bufferedReader = new BufferedReader(new
                     InputStreamReader(stream));
             StringBuilder stringBuilder = new StringBuilder();
             char[] buffer = new char[1];
             int charsRead;
-
             while ((charsRead = bufferedReader.read(buffer)) != -1) {
                 stringBuilder.append(buffer, 0, charsRead);
             }
-
             return stringBuilder.toString();
         } finally {
             stream.close();

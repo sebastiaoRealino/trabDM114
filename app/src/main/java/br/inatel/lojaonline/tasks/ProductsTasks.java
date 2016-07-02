@@ -7,10 +7,12 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 import br.inatel.lojaonline.interfaces.ProductEvents;
-import br.inatel.lojaonline.models.Order;
 import br.inatel.lojaonline.models.Product;
 import br.inatel.lojaonline.util.WSUtil;
 import br.inatel.lojaonline.webservice.WebServiceClient;
@@ -22,6 +24,7 @@ import br.inatel.lojaonline.webservice.WebServiceResponse;
 public class ProductsTasks {
     private static final String GET_PRODUCTS = "/api/Products";
     private static final String GET_ORDERS_BY_ID = "/api/Products";
+    private static final String POST_NEW_PRODUCT = "/api/Products";
     private ProductEvents productEvents;
     private Context context;
     private String baseAddress;
@@ -53,39 +56,44 @@ public class ProductsTasks {
                                 }.getType());
                         productEvents.getProductsFinished(product);
                     } catch (Exception e) {
-                        productEvents.getOrdersFailed(webServiceResponse);
+                        productEvents.getProductsFailed(webServiceResponse);
                     }
                 } else {
-                    productEvents.getOrdersFailed(webServiceResponse);
+                    productEvents.getProductsFailed(webServiceResponse);
                 }
             }
         }.execute(null, null, null);
     }
-    public void getProductById(int id) {
+    public void postNewProduct(final Product product) {
         new AsyncTask<Integer, Void, WebServiceResponse>() {
+
             @Override
             protected WebServiceResponse doInBackground(Integer... id) {
-                return WebServiceClient.getInstance().get(context,
-                        baseAddress + GET_ORDERS_BY_ID + "/" +
-                                Integer.toString(id[0]));
+                JSONObject productJson = new JSONObject();
+                try {
+
+                    productJson.put("Id", product.getId());
+                    productJson.put("nome", product.getNome());
+                    productJson.put("codigo", product.getCodigo());
+                    productJson.put("preco", product.getPreco());
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return WebServiceClient.getInstance().post(context,
+                        baseAddress + POST_NEW_PRODUCT, productJson.toString());
             }
             @Override
             protected void onPostExecute(
                     WebServiceResponse webServiceResponse) {
                 if (webServiceResponse.getResponseCode() == 200) {
-                    Gson gson = new Gson();
-                    try {
-                        Product order = gson.fromJson(
-                                webServiceResponse.getResultMessage(),
-                                Product.class);
-                        productEvents.getOrderByIdFinished(order);
-                    } catch (Exception e) {
-                        productEvents.getOrderByIdFailed(webServiceResponse);
-                    }
+                    productEvents.postProductFinished(webServiceResponse.getResponseMessage());
                 } else {
-                    productEvents.getOrderByIdFailed(webServiceResponse);
+                    productEvents.postProductFailed(webServiceResponse.getResponseMessage());
                 }
             }
-        }.execute(id, null, null);
+        }.execute();
     }
+
 }

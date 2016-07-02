@@ -24,6 +24,7 @@ import br.inatel.lojaonline.controller.SharedPreferenceController;
 import br.inatel.lojaonline.fragments.GCMFragment;
 import br.inatel.lojaonline.fragments.OrdersFragment;
 import br.inatel.lojaonline.fragments.ProductListFragment;
+import br.inatel.lojaonline.fragments.ProductRegisterFragment;
 import br.inatel.lojaonline.fragments.SettingsFragment;
 import br.inatel.lojaonline.interfaces.LoginInterface;
 import br.inatel.lojaonline.tasks.LoginTask;
@@ -140,10 +141,6 @@ public class MainActivity extends AppCompatActivity
 
         try {
             switch (fragmentId) {
-                case R.id.nav_tela1:
-                    //fragmentClass = Tela1Fragment.class;
-                    //fragment = (Fragment) fragmentClass.newInstance();
-                    break;
                 case R.id.nav_pedidos:
                     fragmentClass = OrdersFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
@@ -164,10 +161,15 @@ public class MainActivity extends AppCompatActivity
                     fragmentClass = ProductListFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
                     break;
+                case R.id.nav_register_product:
+                    fragmentClass = ProductRegisterFragment.class;
+                    fragment = (Fragment) fragmentClass.newInstance();
+                    break;
                 default:
                     fragmentClass = SettingsFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
                     break;
+
             }
         } catch (Exception e) {
             e.printStackTrace();
