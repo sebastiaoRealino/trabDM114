@@ -20,7 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GCMFragment extends Fragment implements GCMRegisterEvents {
+public class GCMFragment extends Fragment implements GCMRegisterEvents{
     private String registrationID;
     private GCMRegister gcmRegister;
     private Button btnUnregister;
@@ -34,6 +34,7 @@ public class GCMFragment extends Fragment implements GCMRegisterEvents {
     private TextView txtProductCode;
     private TextView txtProductPrice;
     private ProductInfo productInfo;
+
     @Override
     public void gcmRegisterFinished(String registrationID) {
         Toast.makeText(getActivity(),
@@ -41,6 +42,7 @@ public class GCMFragment extends Fragment implements GCMRegisterEvents {
                 Toast.LENGTH_SHORT).show();
         setForRegistered(registrationID);
     }
+
     @Override
     public void gcmRegisterFailed(IOException ex) {
         Toast.makeText(getActivity(),
@@ -48,6 +50,7 @@ public class GCMFragment extends Fragment implements GCMRegisterEvents {
                         ex.getMessage(), Toast.LENGTH_SHORT).show();
         setForUnregistered();
     }
+
     @Override
     public void gcmUnregisterFinished() {
         Toast.makeText(getActivity(),
@@ -55,22 +58,26 @@ public class GCMFragment extends Fragment implements GCMRegisterEvents {
                 Toast.LENGTH_SHORT).show();
         setForUnregistered();
     }
+
     @Override
     public void gcmUnregisterFailed(IOException ex) {
         Toast.makeText(getActivity(),
                 "Falha ao desregistrar o dispositivo na nuvem.",
                 Toast.LENGTH_SHORT).show();
     }
-    private void setForRegistered (String regID) {
+
+    private void setForRegistered(String regID) {
         txtRegistrationID.setText(regID);
         btnUnregister.setEnabled(true);
         btnRegister.setEnabled(false);
     }
-    private void setForUnregistered () {
+
+    private void setForUnregistered() {
         txtRegistrationID.setText("");
         btnUnregister.setEnabled(false);
         btnRegister.setEnabled(true);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -104,7 +111,9 @@ public class GCMFragment extends Fragment implements GCMRegisterEvents {
             setForUnregistered();
         }
 
+
         Bundle bundle = this.getArguments();
+
         if ((bundle != null) && (bundle.containsKey("productInfo"))) {
             productInfo = (ProductInfo) bundle.getSerializable(
                     "productInfo");

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,12 +28,15 @@ import br.inatel.lojaonline.fragments.ProductListFragment;
 import br.inatel.lojaonline.fragments.ProductRegisterFragment;
 import br.inatel.lojaonline.fragments.SettingsFragment;
 import br.inatel.lojaonline.interfaces.LoginInterface;
+import br.inatel.lojaonline.models.ProductInfo;
 import br.inatel.lojaonline.tasks.LoginTask;
 import br.inatel.lojaonline.webservice.WebServiceClient;
 import br.inatel.lojaonline.webservice.WebServiceResponse;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoginInterface {
+
+    private ProductInfo productInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         loadSharedPreference();
+
+        Intent intent = this.getIntent();
+        if (intent.hasExtra("productInfo")) {
+            productInfo = (ProductInfo) intent.
+                    getSerializableExtra("productInfo");
+            if (productInfo != null) {
+                displayFragment(R.id.nav_gcm);
+            }
+        } else if (savedInstanceState == null) {
+            displayFragment(R.id.nav_config);
+        }
 
 
     }
@@ -87,6 +102,17 @@ public class MainActivity extends AppCompatActivity
 
     public void buildAlertDialog(){
 
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.hasExtra("productInfo")) {
+            productInfo = (ProductInfo) intent.
+                    getSerializableExtra("productInfo");
+            if (productInfo != null) {
+                displayFragment(R.id.nav_config);
+            }
+        }
+        super.onNewIntent(intent);
     }
 
     @Override
@@ -153,10 +179,10 @@ public class MainActivity extends AppCompatActivity
                     fragmentClass = SettingsFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
                     break;
-                case R.id.nav_gcm:
-                    fragmentClass = GCMFragment.class;
-                    fragment = (Fragment) fragmentClass.newInstance();
-                    break;
+//                case R.id.nav_gcm:
+//                    fragmentClass = GCMFragment.class;
+//                    fragment = (Fragment) fragmentClass.newInstance();
+//                    break;
                 case R.id.nav_product_list:
                     fragmentClass = ProductListFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
@@ -164,6 +190,16 @@ public class MainActivity extends AppCompatActivity
                 case R.id.nav_register_product:
                     fragmentClass = ProductRegisterFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
+                    break;
+                case R.id.nav_gcm:
+                    fragmentClass = GCMFragment.class;
+                    fragment = (Fragment) fragmentClass.newInstance();
+                    if (productInfo != null) {
+                        Bundle args = new Bundle();
+                        args.putSerializable("productInfo", productInfo);
+                        fragment.setArguments(args);
+                        productInfo = null;
+                    }
                     break;
                 default:
                     fragmentClass = SettingsFragment.class;

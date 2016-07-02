@@ -15,6 +15,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 
 import br.inatel.lojaonline.MainActivity;
+import br.inatel.lojaonline.R;
 import br.inatel.lojaonline.models.ProductInfo;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
@@ -25,16 +26,12 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
         this.context = context;
         String messageType = gcm.getMessageType(intent);
-
         if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
             Bundle extras = intent.getExtras();
-
             Gson gson = new Gson();
-
             if (extras.containsKey("product")) {
                 String productStr = extras.getString("product");
                 if (productStr != null) {
@@ -44,22 +41,20 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                 }
             }
         }
-
         setResultCode(Activity.RESULT_OK);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+
     private void sendNotification(ProductInfo productInfo) {
         mNotificationManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-
         Intent intent = new Intent(context, MainActivity.class);
         intent.putExtra("productInfo", productInfo);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         Notification.Builder mBuilder = new Notification.Builder(
                 context)
+                .setSmallIcon(R.drawable.ic_warning_black_24dp)
                 .setAutoCancel(true)
                 .setContentTitle("Siecola Vendas")
                 .setStyle(new Notification.BigTextStyle().bigText("Produto:"
@@ -68,9 +63,9 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
                 .setContentText(
                         "Produto:" + productInfo.getId() + " - "
                                 + productInfo.getName());
-
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
+
 
 }
