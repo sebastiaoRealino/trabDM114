@@ -20,30 +20,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import java.io.IOException;
+
+import br.inatel.lojaonline.controller.GCMRegister;
 import br.inatel.lojaonline.controller.SharedPreferenceController;
 import br.inatel.lojaonline.fragments.GCMFragment;
 import br.inatel.lojaonline.fragments.OrdersFragment;
 import br.inatel.lojaonline.fragments.ProductListFragment;
 import br.inatel.lojaonline.fragments.ProductRegisterFragment;
 import br.inatel.lojaonline.fragments.SettingsFragment;
+import br.inatel.lojaonline.interfaces.GCMPutEvents;
+import br.inatel.lojaonline.interfaces.GCMRegisterEvents;
 import br.inatel.lojaonline.interfaces.LoginInterface;
 import br.inatel.lojaonline.models.ProductInfo;
+import br.inatel.lojaonline.tasks.GCMRegisterTask;
 import br.inatel.lojaonline.tasks.LoginTask;
 import br.inatel.lojaonline.webservice.WebServiceClient;
 import br.inatel.lojaonline.webservice.WebServiceResponse;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LoginInterface {
+        implements NavigationView.OnNavigationItemSelectedListener, LoginInterface, GCMRegisterEvents, GCMPutEvents {
 
     private ProductInfo productInfo;
+    private GCMRegister gcmRegister;
+    private String registrationID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -55,19 +64,38 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         loadSharedPreference();
+        if (gcmRegister == null)
+            gcmRegister = new GCMRegister(this, this);
+
+        if (!gcmRegister.isRegistrationExpired()) {
+            registrationID = gcmRegister.getCurrentRegistrationId();
+        }
 
         Intent intent = this.getIntent();
         if (intent.hasExtra("productInfo")) {
             productInfo = (ProductInfo) intent.
                     getSerializableExtra("productInfo");
-            if (productInfo != null) {
-                displayFragment(R.id.nav_gcm);
-            }
+
         } else if (savedInstanceState == null) {
             displayFragment(R.id.nav_config);
         }
+        setGCMRegister();
 
-
+    }
+    private void setGCMRegister(){
+        registrationID = gcmRegister.getRegistrationId("");
+        if ((registrationID == null) ||
+                (registrationID.length() == 0)) {
+            Toast.makeText(this,
+                    "Dispositivo ainda não registrado na nuvem. " +
+                            "Tentando...",
+                    Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this,
+                    "Dispositivo já registrado na nuvem.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadSharedPreference() {
@@ -100,9 +128,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void buildAlertDialog(){
 
-    }
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent.hasExtra("productInfo")) {
@@ -179,10 +205,6 @@ public class MainActivity extends AppCompatActivity
                     fragmentClass = SettingsFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
                     break;
-//                case R.id.nav_gcm:
-//                    fragmentClass = GCMFragment.class;
-//                    fragment = (Fragment) fragmentClass.newInstance();
-//                    break;
                 case R.id.nav_product_list:
                     fragmentClass = ProductListFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
@@ -190,16 +212,6 @@ public class MainActivity extends AppCompatActivity
                 case R.id.nav_register_product:
                     fragmentClass = ProductRegisterFragment.class;
                     fragment = (Fragment) fragmentClass.newInstance();
-                    break;
-                case R.id.nav_gcm:
-                    fragmentClass = GCMFragment.class;
-                    fragment = (Fragment) fragmentClass.newInstance();
-                    if (productInfo != null) {
-                        Bundle args = new Bundle();
-                        args.putSerializable("productInfo", productInfo);
-                        fragment.setArguments(args);
-                        productInfo = null;
-                    }
                     break;
                 default:
                     fragmentClass = SettingsFragment.class;
@@ -236,5 +248,49 @@ public class MainActivity extends AppCompatActivity
             builder.create();
             builder.show();
         }
+    }
+
+    @Override
+    public void gcmPushRegisterFinished(String registrationID) {
+        Toast.makeText(this,
+                "Dispositivo registrado na nuvem com sucesso.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void gcmPushRegisterFailed(String error) {
+        Toast.makeText(this,
+                "Dispositivo pronto para receber push.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void gcmRegisterFinished(String registrationID) {
+        Toast.makeText(this,
+                "Dispositivo não esta apto a receber push.",
+                Toast.LENGTH_SHORT).show();
+        GCMRegisterTask gcmRegisterTask = new GCMRegisterTask(this,this);
+        gcmRegisterTask.putRegId(registrationID);
+    }
+
+    @Override
+    public void gcmRegisterFailed(IOException ex) {
+        Toast.makeText(this,
+                "Falha ao registrar dispositivo na nuvem. " +
+                        ex.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void gcmUnregisterFinished() {
+        Toast.makeText(this,
+                "Dispositivo desregistrado da nuvem.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void gcmUnregisterFailed(IOException ex) {
+        Toast.makeText(this,
+                "Falha ao desregistrar o dispositivo na nuvem.",
+                Toast.LENGTH_SHORT).show();
     }
 }

@@ -133,6 +133,53 @@ public class WebServiceClient {
         return webServiceResponse;
     }
 
+
+
+    public WebServiceResponse put (Context context,
+                                    String host, String json) {
+        WebServiceResponse webServiceResponse = new WebServiceResponse();
+        try {
+            webServiceResponse = init(context, host,
+                    WSConstants.METHOD_POST);
+            if (webServiceResponse.getResponseCode() != 200) {
+                return webServiceResponse;
+            }
+            conn.setDoOutput(true);
+            conn.setFixedLengthStreamingMode(json.length());
+            conn.getOutputStream().write(json.getBytes("UTF-8"));
+            conn.getOutputStream().flush();
+            conn.getOutputStream().close();
+            conn.connect();
+            if (conn.getResponseCode() == 401) {
+                invalidateToken(context);
+                webServiceResponse = init(context, host,
+                        WSConstants.METHOD_POST);
+                if (webServiceResponse.getResponseCode() != 200) {
+                    return webServiceResponse;
+                } else {
+                    conn.setDoOutput(true);
+                    conn.setFixedLengthStreamingMode(json.length());
+                    conn.getOutputStream().write(json.getBytes("UTF-8"));
+                    conn.getOutputStream().flush();
+                    conn.getOutputStream().close();
+                    conn.connect();
+                }
+            }
+            InputStream is = new BufferedInputStream(conn.getInputStream());
+            webServiceResponse = new WebServiceResponse();
+            webServiceResponse.setResultMessage(readIt(is));
+            webServiceResponse.setResponseCode(conn.getResponseCode());
+            webServiceResponse.setResponseMessage(conn.getResponseMessage());
+            is.close();
+        } catch (IOException e) {
+            webServiceResponse.setResponseCode(0);
+            webServiceResponse.setResponseMessage(e.getMessage());
+        } finally {
+            conn.disconnect();
+        }
+        return webServiceResponse;
+    }
+
     public WebServiceResponse init(Context context, String host,
                                            String method) throws IOException {
         WebServiceResponse webServiceResponse;

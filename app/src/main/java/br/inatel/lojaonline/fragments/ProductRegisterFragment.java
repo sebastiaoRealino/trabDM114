@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -62,11 +63,18 @@ public class ProductRegisterFragment extends Fragment implements ProductEvents, 
     @Override
     public void postProductFinished(String message) {
         Log.i("ProducRegisterFragment"," postProductFinished POST!");
+        Toast.makeText(getActivity(),
+                "Produto registrado com sucesso!",
+                Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public void postProductFailed(String error) {
         Log.i("ProducRegisterFragment"," postProductFinished Failed! MSG: "+ error);
+        Toast.makeText(getActivity(),
+                "Falha ao cadastrar produto!",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override

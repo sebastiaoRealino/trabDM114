@@ -87,7 +87,7 @@ public class ProductsTasks {
             @Override
             protected void onPostExecute(
                     WebServiceResponse webServiceResponse) {
-                if (webServiceResponse.getResponseCode() == 200) {
+                if (webServiceResponse.getResponseCode() == 201) {
                     productEvents.postProductFinished(webServiceResponse.getResponseMessage());
                 } else {
                     productEvents.postProductFailed(webServiceResponse.getResponseMessage());
